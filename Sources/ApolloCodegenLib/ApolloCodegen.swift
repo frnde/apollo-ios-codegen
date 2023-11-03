@@ -4,9 +4,6 @@ import GraphQLCompiler
 import OrderedCollections
 import Utilities
 
-// Only available on macOS
-#if os(macOS)
-
 /// A class to facilitate running code generation
 public class ApolloCodegen {
 
@@ -587,5 +584,3 @@ extension ApolloCodegen {
     }
   }
 }
-
-#endif

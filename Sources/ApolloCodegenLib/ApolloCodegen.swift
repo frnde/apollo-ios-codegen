@@ -161,8 +161,8 @@ public final class ApolloCodegen: Sendable {
   /// Performs GraphQL source validation and compiles the schema and operation source documents.
   func compileGraphQLResult() async throws -> CompilationResult {
     let frontend = try await GraphQLJSFrontend()
-    async let graphQLSchema = try createSchema(frontend)
-    async let operationsDocument = try createOperationsDocument(frontend)
+    let graphQLSchema = try await createSchema(frontend)
+    let operationsDocument = try await createOperationsDocument(frontend)
     let validationOptions = ValidationOptions(config: config)
 
     let graphqlErrors = try await frontend.validateDocument(
@@ -343,7 +343,7 @@ public final class ApolloCodegen: Sendable {
         let operationConfig = operation.isLocalCacheMutation ? cacheMutationContext : self.config
 
         group.addTask {
-          async let identifier = self.operationIdentifierFactory.identifier(for: operation)
+          let identifier = try await self.operationIdentifierFactory.identifier(for: operation)
 
           let irOperation = await ir.build(
             operation: operation,
@@ -352,7 +352,7 @@ public final class ApolloCodegen: Sendable {
 
           let errors = try await OperationFileGenerator(
             irOperation: irOperation,
-            operationIdentifier: await identifier,
+            operationIdentifier: identifier,
             config: operationConfig
           ).generate(
             forConfig: operationConfig,
